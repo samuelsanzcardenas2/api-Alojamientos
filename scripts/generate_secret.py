@@ -5,6 +5,7 @@ Ejecutar: python scripts/generate_secret.py
 Esta clave debe copiarse al archivo .env en la variable SECRET_KEY.
 NUNCA compartas esta clave publicamente.
 """
+
 import secrets
 
 secret_key = secrets.token_hex(32)

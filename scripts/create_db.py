@@ -18,6 +18,7 @@ Variables de entorno opcionales (tienen valores por defecto):
 Uso:
     python scripts/create_db.py
 """
+
 import os
 import sys
 
@@ -33,24 +34,28 @@ load_dotenv()
 # ------------------------------------------------------------------
 # Lectura de configuracion desde variables de entorno
 # ------------------------------------------------------------------
-DB_USER = os.getenv('DB_USER', '').strip()
-DB_PASSWORD = os.getenv('DB_PASSWORD', '').strip()
-DB_HOST = os.getenv('DB_HOST', 'localhost').strip()
-DB_PORT = int(os.getenv('DB_PORT', '3306'))
-DB_NAME = os.getenv('DB_NAME', 'alojamientos_db').strip()
-DB_CHARSET = os.getenv('DB_CHARSET', 'utf8mb4').strip()
+DB_USER = os.getenv("DB_USER", "").strip()
+DB_PASSWORD = os.getenv("DB_PASSWORD", "").strip()
+DB_HOST = os.getenv("DB_HOST", "localhost").strip()
+DB_PORT = int(os.getenv("DB_PORT", "3306"))
+DB_NAME = os.getenv("DB_NAME", "alojamientos_db").strip()
+DB_CHARSET = os.getenv("DB_CHARSET", "utf8mb4").strip()
 
 # Validar variables obligatorias
 errores = []
 if not DB_USER:
-    errores.append("DB_USER no esta definida. Asegúrate de configurarla en tu archivo .env")
+    errores.append(
+        "DB_USER no esta definida. Asegúrate de configurarla en tu archivo .env"
+    )
 if not DB_NAME:
-    errores.append("DB_NAME no esta definida. Asegúrate de configurarla en tu archivo .env")
+    errores.append(
+        "DB_NAME no esta definida. Asegúrate de configurarla en tu archivo .env"
+    )
 
 if errores:
-    print('\nError de configuracion de base de datos:', file=sys.stderr)
+    print("\nError de configuracion de base de datos:", file=sys.stderr)
     for error in errores:
-        print(f'  - {error}', file=sys.stderr)
+        print(f"  - {error}", file=sys.stderr)
     print(file=sys.stderr)
     sys.exit(1)
 
@@ -82,8 +87,8 @@ try:
     print(f"Base de datos '{DB_NAME}' creada (o ya existia).")
 
 except pymysql.MySQLError as e:
-    print(f'Error al crear la base de datos: {e}', file=sys.stderr)
+    print(f"Error al crear la base de datos: {e}", file=sys.stderr)
     sys.exit(1)
 finally:
-    if 'connection' in dir() and connection.open:
+    if "connection" in dir() and connection.open:
         connection.close()

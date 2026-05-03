@@ -3,21 +3,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Config:
     """Configuracion central de a aplicacion"""
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY= os.getenv("SECRET_KEY")
-    _jwt_exp = os.getenv("JWT_EXP_MINUTES","15")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    _jwt_exp = os.getenv("JWT_EXP_MINUTES", "15")
 
-    JWT_EXP_MINUTES= int( _jwt_exp) if _jwt_exp.isdigit() else 15
+    JWT_EXP_MINUTES = int(_jwt_exp) if _jwt_exp.isdigit() else 15
 
-    _db_user= os.getenv("DB_USER","").strip()
-    _db_password= os.getenv("DB_PASSWORD","").strip()
-    _db_host= os.getenv("DB_HOST","localhost").strip()
-    _db_port= os.getenv("DB_PORT","3307").strip()
-    _db_name= os.getenv("DB_NAME","alojamientos_db").strip()
-    
+    _db_user = os.getenv("DB_USER", "").strip()
+    _db_password = os.getenv("DB_PASSWORD", "").strip()
+    _db_host = os.getenv("DB_HOST", "localhost").strip()
+    _db_port = os.getenv("DB_PORT", "3307").strip()
+    _db_name = os.getenv("DB_NAME", "alojamientos_db").strip()
 
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{_db_user}:{_db_password}@{_db_host}:{_db_port}/{_db_name}"
@@ -49,6 +49,5 @@ class Config:
         ]
 
     # Ruta base del proyecto
-    BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))        
-    #raiz del proyecto
-    
+    BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    # raiz del proyecto
