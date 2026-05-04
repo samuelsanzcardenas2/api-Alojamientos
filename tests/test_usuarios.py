@@ -136,3 +136,28 @@ class TestPerfil:
         # Los campos establecidos antes no se borran
         assert datos['data']['nombre'] == 'Ana'
         assert datos['data']['apellido'] == 'Garcia'
+
+        class TestAutorizacionAdmin:
+    """Pruebas de autorizacion para endpoints de administrador."""
+
+    def test_admin_sin_token(self, client):
+        """GET /admin/usuarios sin token debe responder 401."""
+        resp = client.get('/api/v1/admin/usuarios')
+        assert resp.status_code == 401
+
+    def test_admin_con_usuario_normal(self, client, usuario_auth):
+        """GET /admin/usuarios con usuario normal debe responder 403."""
+        resp = client.get('/api/v1/admin/usuarios', headers=usuario_auth)
+        assert resp.status_code == 403
+
+    def test_admin_con_admin(self, client, admin_auth):
+        """GET /admin/usuarios con admin debe responder 200 con lista."""
+        resp = client.get('/api/v1/admin/usuarios', headers=admin_auth)
+        datos = json.loads(resp.data)
+
+        assert resp.status_code == 200
+        assert datos['success'] is True
+        assert isinstance(datos['data'], list)
+        # Verificar que no se exponen contrasenas
+        for usuario in datos['data']:
+            assert 'contrasena' not in usuario

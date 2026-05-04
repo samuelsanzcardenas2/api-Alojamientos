@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, app
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -46,6 +46,7 @@ def create_app():
     )
 
     app.register_blueprint(usuarios_bp, url_prefix=f'/api/{API_VERSION}/usuarios')
+    app.register_blueprint(admin_bp, url_prefix=f'/api/{API_VERSION}/admin')
 
     # Manejadores globales de error
     @app.errorhandler(404)
@@ -57,22 +58,22 @@ def create_app():
         return {"success": False, "error": {"message": "Error interno del servidor"}}, 500
 
     # Manejadores de errores de dominio de usuarios
-    from app.dominios.usuarios.servicios import (
-        CorreoYaRegistradoError,
+from app.dominios.usuarios.servicios import (
         CredencialesInvalidasError,
         UsuarioNoEncontradoError,
+        PermisoDenegadoError,
     )
 
-    @app.errorhandler(CorreoYaRegistradoError)
-    def correo_duplicado(error):
-        return {"success": False, "error": {"message": str(error)}}, 400
+@app.errorhandler(PermisoDenegadoError)
+def permiso_denegado(error):
+        return {"success": False, "error": {"message": str(error)}}, 403
 
-    @app.errorhandler(CredencialesInvalidasError)
-    def credenciales_invalidadas(error):
+@app.errorhandler(CredencialesInvalidasError)
+def credenciales_invalidadas(error):
         return {"success": False, "error": {"message": str(error)}}, 401
 
-    @app.errorhandler(UsuarioNoEncontradoError)
-    def usuario_no_encontrado(error):
+@app.errorhandler(UsuarioNoEncontradoError)
+def usuario_no_encontrado(error):
         return {"success": False, "error": {"message": str(error)}}, 404
 
-    return app
+return app

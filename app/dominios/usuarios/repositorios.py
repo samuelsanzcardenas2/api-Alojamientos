@@ -33,3 +33,11 @@ class UsuarioRepositorio:
         db.session.add(perfil)
         db.session.commit()
         return perfil
+    
+     @staticmethod
+    def listar_todos():
+        return db.session.query(Usuario).all()
+    
+    @staticmethod
+    def actualizar_usuario():
+        db.session.commit()
