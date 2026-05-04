@@ -48,6 +48,15 @@ def create_app():
     app.register_blueprint(usuarios_bp, url_prefix=f'/api/{API_VERSION}/usuarios')
     app.register_blueprint(admin_bp, url_prefix=f'/api/{API_VERSION}/admin')
 
+    from app.dominios.alojamientos.controladores import alojamientos_bp
+    from app.dominios.alojamientos.servicios import AlojamientoServicio
+    from app.dominios.alojamientos import controladores as alojamientos_ctrl
+    from app.dominios.alojamientos.servicios import AlojamientoNoEncontradoError
+
+    alojamientos_ctrl.alojamiento_servicio = AlojamientoServicio()
+
+    app.register_blueprint(alojamientos_bp, url_prefix=f'/api/{API_VERSION}/alojamientos')
+
     # Manejadores globales de error
     @app.errorhandler(404)
     def recurso_no_encontrado(error):
@@ -74,6 +83,11 @@ def credenciales_invalidadas(error):
 
 @app.errorhandler(UsuarioNoEncontradoError)
 def usuario_no_encontrado(error):
+        return {"success": False, "error": {"message": str(error)}}, 404
+
+
+@app.errorhandler(AlojamientoNoEncontradoError)
+    def alojamiento_no_encontrado(error):
         return {"success": False, "error": {"message": str(error)}}, 404
 
 return app
