@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
 from app.dominios.usuarios.modelos import Usuario, PerfilUsuario
 from app.dominios.usuarios.repositorios import UsuarioRepositorio
 
@@ -20,7 +19,10 @@ class CredencialesInvalidasError(Exception):
 
 class UsuarioNoEncontradoError(Exception):
     pass
+
+
 class PermisoDenegadoError(Exception):
+    pass
 
 # --- Funciones auxiliares de JWT ---
 
@@ -87,7 +89,7 @@ class UsuarioServicio:
         """Obtiene el perfil de un usuario."""
         perfil = UsuarioRepositorio.obtener_perfil_por_usuario_id(usuario_id)
         if not perfil:
-            return UsuarioNoEncontradoError('Perfil no encontrado.')
+            raise UsuarioNoEncontradoError('Perfil no encontrado.')
         return perfil.to_dict()
 
     def actualizar_perfil(self, usuario_id, datos):

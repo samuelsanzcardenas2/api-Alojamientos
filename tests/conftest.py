@@ -68,3 +68,57 @@ def usuario_auth(client):
         'Authorization': f'Bearer {token}',
         'Content-Type': 'application/json',
     }
+
+
+@pytest.fixture
+def usuario_auth2(client):
+    """Crea un segundo usuario unico con token valido."""
+    import uuid
+    email = f'auth2-{uuid.uuid4().hex[:8]}@ejemplo.com'
+
+    client.post('/api/v1/usuarios/registro', json={
+        'correo': email,
+        'contrasena': '123456',
+    })
+
+    resp = client.post('/api/v1/usuarios/login', json={
+        'correo': email,
+        'contrasena': '123456',
+    })
+    datos = json.loads(resp.data)
+    token = datos['data']['access_token']
+
+    return {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json',
+    }
+
+
+@pytest.fixture
+def admin_auth(client):
+    """Crea un usuario admin y devuelve headers con token valido."""
+    import uuid
+    from app.dominios.usuarios.repositorios import UsuarioRepositorio
+
+    email = f'admin-{uuid.uuid4().hex[:8]}@ejemplo.com'
+
+    client.post('/api/v1/usuarios/registro', json={
+        'correo': email,
+        'contrasena': '123456',
+    })
+
+    usuario = UsuarioRepositorio.obtener_por_correo(email)
+    usuario.rol = 'admin'
+    _db.session.commit()
+
+    resp = client.post('/api/v1/usuarios/login', json={
+        'correo': email,
+        'contrasena': '123456',
+    })
+    datos = json.loads(resp.data)
+    token = datos['data']['access_token']
+
+    return {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json',
+    }

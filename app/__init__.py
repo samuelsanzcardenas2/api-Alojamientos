@@ -1,4 +1,4 @@
-from flask import Flask, app
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -31,15 +31,14 @@ def create_app():
         return {
             "status": "ok",
             "service": "alojamientos-api",
-            "version": API_VERSION
+            "version": API_VERSION,
         }, 200
 
     # Registrar blueprint de usuarios
-    from app.dominios.usuarios.controladores import usuarios_bp
+    from app.dominios.usuarios.controladores import usuarios_bp, admin_bp
     from app.dominios.usuarios.servicios import UsuarioServicio
     from app.dominios.usuarios import controladores as usuarios_ctrl
 
-    # Inyectar el servicio con la config correcta
     usuarios_ctrl.usuario_servicio = UsuarioServicio(
         secret_key=app.config['SECRET_KEY'],
         jwt_exp_minutes=app.config.get('JWT_EXP_MINUTES', 15),
@@ -48,13 +47,11 @@ def create_app():
     app.register_blueprint(usuarios_bp, url_prefix=f'/api/{API_VERSION}/usuarios')
     app.register_blueprint(admin_bp, url_prefix=f'/api/{API_VERSION}/admin')
 
-    from app.dominios.alojamientos.controladores import alojamientos_bp
-    from app.dominios.alojamientos.servicios import AlojamientoServicio
-    from app.dominios.alojamientos import controladores as alojamientos_ctrl
-    from app.dominios.alojamientos.servicios import AlojamientoNoEncontradoError
+    from app.alojamientos.controladores import alojamientos_bp
+    from app.alojamientos.servicios import AlojamientoServicio, AlojamientoNoEncontradoError
+    from app.alojamientos import controladores as alojamientos_ctrl
 
     alojamientos_ctrl.alojamiento_servicio = AlojamientoServicio()
-
     app.register_blueprint(alojamientos_bp, url_prefix=f'/api/{API_VERSION}/alojamientos')
 
     # Manejadores globales de error
@@ -66,28 +63,31 @@ def create_app():
     def error_interno(error):
         return {"success": False, "error": {"message": "Error interno del servidor"}}, 500
 
-    # Manejadores de errores de dominio de usuarios
-from app.dominios.usuarios.servicios import (
+    from app.dominios.usuarios.servicios import (
+        CorreoYaRegistradoError,
         CredencialesInvalidasError,
         UsuarioNoEncontradoError,
         PermisoDenegadoError,
     )
 
-@app.errorhandler(PermisoDenegadoError)
-def permiso_denegado(error):
+    @app.errorhandler(CorreoYaRegistradoError)
+    def correo_duplicado(error):
+        return {"success": False, "error": {"message": str(error)}}, 400
+
+    @app.errorhandler(PermisoDenegadoError)
+    def permiso_denegado(error):
         return {"success": False, "error": {"message": str(error)}}, 403
 
-@app.errorhandler(CredencialesInvalidasError)
-def credenciales_invalidadas(error):
+    @app.errorhandler(CredencialesInvalidasError)
+    def credenciales_invalidadas(error):
         return {"success": False, "error": {"message": str(error)}}, 401
 
-@app.errorhandler(UsuarioNoEncontradoError)
-def usuario_no_encontrado(error):
+    @app.errorhandler(UsuarioNoEncontradoError)
+    def usuario_no_encontrado(error):
         return {"success": False, "error": {"message": str(error)}}, 404
 
-
-@app.errorhandler(AlojamientoNoEncontradoError)
+    @app.errorhandler(AlojamientoNoEncontradoError)
     def alojamiento_no_encontrado(error):
         return {"success": False, "error": {"message": str(error)}}, 404
 
-return app
+    return app

@@ -1,5 +1,5 @@
 from app import db
-from app.dominios.alojamientos.modelos import Alojamiento
+from app.alojamientos.modelos import Alojamiento
 
 
 class AlojamientoRepositorio:

@@ -1,6 +1,5 @@
-from app import db
-from app.dominios.alojamientos.modelos import Alojamiento
-from app.dominios.alojamientos.repositorios import AlojamientoRepositorio
+from app.alojamientos.modelos import Alojamiento
+from app.alojamientos.repositorios import AlojamientoRepositorio
 from app.dominios.usuarios.servicios import PermisoDenegadoError
 
 

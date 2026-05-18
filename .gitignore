@@ -1,0 +1,10 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+# Environment
+.env
+.env.*
+# Pytest cache
+.pytest_cache/

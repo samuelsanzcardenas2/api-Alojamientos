@@ -2,13 +2,9 @@ from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 
 from app.dominios.usuarios.dtos import RegistroUsuarioDTO, ActualizarPerfilDTO
-
-from app_seguridad
-
-usuarios_bp = Blueprint('usuarios', __name__)
-
 from app.seguridad import requiere_token, requiere_admin
 
+usuarios_bp = Blueprint('usuarios', __name__)
 admin_bp = Blueprint('admin', __name__)
 
 # Variable global que el app factory asignara al crear la app
@@ -96,7 +92,6 @@ def actualizar_perfil(usuario_id):
 
 
 @admin_bp.route('/usuarios', methods=['GET'])
-
 @requiere_admin
 def listar_usuarios(usuario_id):
     """Listar todos los usuarios del sistema (solo admin)."""

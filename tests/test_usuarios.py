@@ -137,7 +137,8 @@ class TestPerfil:
         assert datos['data']['nombre'] == 'Ana'
         assert datos['data']['apellido'] == 'Garcia'
 
-        class TestAutorizacionAdmin:
+
+class TestAutorizacionAdmin:
     """Pruebas de autorizacion para endpoints de administrador."""
 
     def test_admin_sin_token(self, client):
